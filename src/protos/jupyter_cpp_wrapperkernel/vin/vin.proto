@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+option go_package = "tuwien.ac.at/fusevin/vin";
+
+package vin;
+
+service FuseVin {
+  rpc CreatePuppet (Empty) returns (CreatePuppetReply);
+  rpc StartStdinNotify (StartStdinNotifyRequest) returns (stream StdinNotify);
+  rpc SupplyStdinContent (StdinContent) returns (Empty);
+  rpc DestroyPuppet (DestroyPuppetRequest) returns (Empty);
+}
+
+message CreatePuppetReply {
+  string id = 1;
+  string vin_filename = 2;
+}
+
+message StartStdinNotifyRequest {
+  string id = 1;
+}
+
+message DestroyPuppetRequest {
+  string id = 1;
+}
+
+message StdinNotify {}
+
+message StdinContent {
+  string id = 1;
+  string payload = 2;
+}
+
+message Empty {}

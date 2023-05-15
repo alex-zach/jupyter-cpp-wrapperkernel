@@ -1,0 +1,2 @@
+CHANNEL_STDOUT = 'stdout'
+CHANNEL_STDERR = 'stderr'
