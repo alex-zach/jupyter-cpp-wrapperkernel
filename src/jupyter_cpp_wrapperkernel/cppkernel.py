@@ -121,12 +121,12 @@ class CPPKernel(Kernel):
             lib = todolibs.pop()
 
             alllibs.add(lib)
-            todolibs |= set([*self._libraries[lib]['headerdeps'], *self._libraries[lib]['binarydeps']])
+            todolibs |= set([*self._libraries[lib].get('headerdeps', []), *self._libraries[lib].get('binarydeps', [])])
             todolibs -= alllibs
 
         self._print(f'[C++ Kernel] Linking with flags \'{" ".join(ldflags)}\'.\n', info=True)
 
-        cmd = ['g++', binary_filename] + list(map(lambda l: self._libraries[l]['binary'], alllibs)) + ['-o', executable_filename] + ldflags
+        cmd = ['g++', binary_filename] + list(filter(lambda x: x is not None, map(lambda l: self._libraries[l].get('binary', None), alllibs))) + ['-o', executable_filename] + ldflags
         return self._run_subprocess(cmd, print=self.print_infos)
 
     def _tempfile(self, **kwargs):
