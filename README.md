@@ -49,6 +49,9 @@ The currently supported magics are:
 
 Feel free to customize the magics according to your requirements.
 
+## Additional Output
+To show additional output, just run the code `toggle_infos` as code cell.
+
 ## License
 
 This project is licensed under the MIT License. For more information, please see the [LICENSE.txt](LICENSE.txt) file.

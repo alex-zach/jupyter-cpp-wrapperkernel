@@ -36,7 +36,7 @@ class CPPKernel(Kernel):
         super(CPPKernel, self).__init__(**kwargs)
         self._allow_stdin = True
 
-        self.print_infos = True
+        self.print_infos = False
 
         self.linkMaths = True
         self.wall = True
@@ -72,6 +72,18 @@ class CPPKernel(Kernel):
         }
         self._magic_pattern = compile(r'\/\/%(' + r'|'.join(self._magic_parsers.keys()) + r'):(.*)')
         self._include_pattern = compile(r'#include[^\S\n\r]*"(.*)"')
+
+        self._kernel_commands = {
+            'toggle_infos': self._toggle_print_infos
+        }
+
+    def _toggle_print_infos(self):
+        self.print_infos = not self.print_infos
+        if self.print_infos:
+            self._print("[C++ Kernel] Infos are now shown.")
+        else:
+            self._print("[C++ Kernel] Infos are now hidden.")
+        return self.print_infos
 
     def _print(self, contents, channel=CHANNEL_STDOUT, info=False):
         '''Prints content to juypter'''
@@ -109,7 +121,7 @@ class CPPKernel(Kernel):
         self._print(f'[C++ Kernel] Compiling with flags \'{" ".join(cppflags)}\'.\n', info=True)
 
         cmd = ['g++', source_filename] + cppflags + ['-o', binary_filename]
-        return self._run_subprocess(cmd, print=self.print_infos)
+        return self._run_subprocess(cmd)
 
     def _start_link(self, executable_filename, binary_filename, libs, ldflags=[]):
         '''Start a subprocess that links the given binaries'''
@@ -127,7 +139,7 @@ class CPPKernel(Kernel):
         self._print(f'[C++ Kernel] Linking with flags \'{" ".join(ldflags)}\'.\n', info=True)
 
         cmd = ['g++', binary_filename] + list(filter(lambda x: x is not None, map(lambda l: self._libraries[l].get('binary', None), alllibs))) + ['-o', executable_filename] + ldflags
-        return self._run_subprocess(cmd, print=self.print_infos)
+        return self._run_subprocess(cmd)
 
     def _tempfile(self, **kwargs):
         '''Create a new temp file to be deleted when the kernel shuts down'''
@@ -199,6 +211,10 @@ class CPPKernel(Kernel):
 
     def do_execute(self, code, silent, store_history=True, user_expressions=None, allow_stdin=True):
         '''Execute Code from Jupyter'''
+
+        if code in self._kernel_commands.keys():
+            self._kernel_commands[code]()
+            return {'status': 'ok', 'execution_count': self.execution_count, 'payload': [], 'user_expressions': {}}
 
         magics, libs, code = self._preprocess_code(code)
 
