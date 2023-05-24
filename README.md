@@ -11,7 +11,7 @@ To install the Jupyter C++ Wrapper Kernel using Docker, follow these steps:
 1. Clone the repository:
 
    ```shell
-   git clone git@github.com:alex-zach/jupyter-cpp-wrapperkernel.git
+   git clone https://github.com/alex-zach/jupyter-cpp-wrapperkernel.git
    ```
 
 2. Build the Docker image:
