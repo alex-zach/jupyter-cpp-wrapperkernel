@@ -19,6 +19,9 @@ RUN chmod 777 /mnt/fusevin
 
 COPY ./ jupyter_cpp_wrapperkernel/
 
+# install rise plugin
+RUN pip install RISE
+
 # install kernel
 RUN pip install --no-cache-dir jupyter_cpp_wrapperkernel/ > piplog.txt
 USER $NB_USER
